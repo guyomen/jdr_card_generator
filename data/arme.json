@@ -1,0 +1,5 @@
+[
+  { "nom": "Épée longue",  "sous_type": "Corps à corps", "dm": "1d8+FOR",  "portee": "Mêlée",      "regles": "Peut être tenue à une ou deux mains. À deux mains : +2 DM.",  "description_ia":"basic long sword, medieval and fantasy weapon, steel blade with a leather-wrapped hilt, designed for slashing and thrusting attacks" },
+  { "nom": "Arc court",    "sous_type": "Distance",      "dm": "1d6+DEX",  "portee": "30 / 90 m",  "regles": "Nécessite deux mains. Munitions : flèches. Rechargement libre.", "description_ia":"short bow, medieval and fantasy ranged weapon, wooden frame with a curved design, used for shooting arrows at medium range" },
+  { "nom": "Dague",        "sous_type": "Corps à corps", "dm": "1d4+FOR",  "portee": "Mêlée / 6m", "regles": "Peut être lancée. Finesse : utiliser DEX à la place de FOR.", "description_ia":"dagger, medieval and fantasy weapon, short steel blade with a sharp point and a hilt, designed for close combat and throwing" }
+]

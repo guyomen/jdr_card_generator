@@ -1,5 +1,0 @@
-[
-  { "nom": "Torche",       "sous_type": "Éclairage",   "stats": {"Durée": "1h",     "Portée": "6 m"},   "info": "Éclaire un rayon de 6 m de lumière vive et 6 m de pénombre. Dure 1 heure." },
-  { "nom": "Corde (15 m)", "sous_type": "Utilitaire",  "stats": {"Longueur": "15 m","Charge max": "250 kg"}, "info": "Corde en chanvre solide. Supporte jusqu'à 250 kg. Indispensable en exploration." },
-  { "nom": "Potion de soin","sous_type": "Consommable", "stats": {"Soin": "2d4+2 PV","Action": "Bonus"}, "info": "Restaure 2d4+2 PV. Action bonus pour la boire soi-même, action complète pour en faire boire un autre." }
-]

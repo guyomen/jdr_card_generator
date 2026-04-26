@@ -3,6 +3,7 @@ Interface en ligne de commande pour le générateur de cartes JDR
 """
 
 import sys
+import os
 import argparse
 from .generator import CardGenerator
 
@@ -25,15 +26,16 @@ providers:
   openai         DALL-E 3, requiert --api_key
 
 exemples:
-  jdr-cards --arme data/armes.json
-  jdr-cards --arme data/armes.json --generate_image
-  jdr-cards --arme data/armes.json --generate_image --provider local
+  jdr-cards --input data/armes.json
+  jdr-cards --input data --generate_image --provider local
+  jdr-cards --arme data/armes.json --armure data/armures.json
   jdr-cards --arme data/armes.json --generate_image --provider local --model stabilityai/sdxl-turbo
   jdr-cards --arme data/armes.json --generate_image --provider localapi --api_url http://localhost:7860
   jdr-cards --arme data/armes.json --generate_image --provider openai --api_key sk-...
         """,
     )
 
+    parser.add_argument("--input", metavar="PATH", help="Fichier JSON ou dossier contenant les JSONs (auto-détecte le type)")
     parser.add_argument("--arme", metavar="FICHIER", help="Fichier JSON des armes")
     parser.add_argument("--armure", metavar="FICHIER", help="Fichier JSON des armures")
     parser.add_argument("--autre", metavar="FICHIER", help="Fichier JSON des équipements")
@@ -85,8 +87,13 @@ def main():
     """Point d'entrée principal"""
     args = parse_args()
 
-    if not any([args.arme, args.armure, args.autre]):
-        print("❌  Aucun fichier JSON. Utilisez --arme, --armure et/ou --autre.")
+    # Validation : soit --input, soit --arme/--armure/--autre
+    if args.input and any([args.arme, args.armure, args.autre]):
+        print("❌  Utilise soit --input, soit --arme/--armure/--autre, pas les deux")
+        sys.exit(1)
+
+    if not args.input and not any([args.arme, args.armure, args.autre]):
+        print("❌  Spécifie soit --input (fichier/dossier) soit --arme/--armure/--autre")
         sys.exit(1)
 
     if args.generate_image and args.provider == "openai" and not args.api_key:
@@ -97,11 +104,15 @@ def main():
     generator = CardGenerator(cache_dir=args.image_cache)
 
     # Charge les cartes
-    cards = generator.load_cards_from_files(
-        armes=args.arme,
-        armures=args.armure,
-        autres=args.autre,
-    )
+    if args.input:
+        print(f"📁 Chargement depuis {args.input}...")
+        cards = generator.load_cards_from_input(args.input)
+    else:
+        cards = generator.load_cards_from_files(
+            armes=args.arme,
+            armures=args.armure,
+            autres=args.autre,
+        )
 
     # Génère les images si demandé
     if args.generate_image:

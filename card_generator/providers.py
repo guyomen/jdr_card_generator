@@ -12,6 +12,9 @@ import base64
 import urllib.request
 import urllib.parse
 
+# Désactive les custom ops CUDA pour éviter les incompatibilités torch/diffusers
+os.environ["DIFFUSERS_DISABLE_CUDA_CUSTOM_OPS"] = "1"
+
 
 def _safe_filename(name: str) -> str:
     """Convertit un nom en nom de fichier sûr"""
@@ -19,22 +22,12 @@ def _safe_filename(name: str) -> str:
 
 
 def _build_prompt(card: dict) -> str:
-    """Construit un prompt IA à partir des infos de la carte"""
-    nom = card.get("nom", "item")
-    sous_type = card.get("sous_type", "")
-    kind = card.get("type", "equipement")
-
-    style = {
-        "arme": "fantasy weapon",
-        "armure": "fantasy armor",
-        "equipement": "fantasy item",
-    }.get(kind, "fantasy item")
-
-    parts = [f"{style}: {nom}"]
-    if sous_type:
-        parts.append(sous_type)
-    parts += ["detailed illustration", "dark background", "concept art", "no text"]
-    return ", ".join(parts)
+    """Récupère le prompt IA depuis le champ description_ia de la carte"""
+    prompt = card.get("description_ia", "")
+    if not prompt:
+        print(f"⚠️   Attention : la carte '{card.get('nom', 'inconnu')}' n'a pas de champ 'description_ia'", file=sys.stderr)
+        return ""
+    return prompt
 
 
 class ImageProviderManager:
@@ -78,7 +71,9 @@ class ImageProviderManager:
                 continue
 
             prompt = _build_prompt(card)
-            print(f"  [{i}/{total}] 🎨  {nom} ...", end=" ", flush=True)
+            print(f"  [{i}/{total}] 🎨  {nom}")
+            print(f"          📝 Prompt: {prompt}")
+            print(f"          ⏳ Génération...", end=" ", flush=True)
 
             # Génère selon le provider
             if provider == "local":
@@ -129,15 +124,16 @@ class ImageProviderManager:
 
         try:
             import torch_directml
-
             return torch_directml.device(), torch.float32, "DirectML (AMD/Intel via WSL)"
         except ImportError:
             pass
 
         if torch.cuda.is_available():
-            return "cuda", torch.float16, f"CUDA ({torch.cuda.get_device_name(0)})"
+            device_name = torch.cuda.get_device_name(0)
+            vram = torch.cuda.get_device_properties(0).total_memory / 1e9
+            return "cuda", torch.float16, f"CUDA - {device_name} ({vram:.1f} GB)"
 
-        return "cpu", torch.float32, "CPU (pas de GPU détecté)"
+        return "cpu", torch.float32, "CPU ⚠️  (LENT - installe CUDA ou torch-directml pour accélérer)"
 
     @staticmethod
     def _gen_local(prompt: str, dest: str, model_id: str) -> bool:
@@ -162,9 +158,16 @@ class ImageProviderManager:
             not hasattr(ImageProviderManager._gen_local, "_pipe")
             or ImageProviderManager._gen_local._model_id != model_id
         ):
-            print(f"  📦  Chargement du modèle {model_id} (première fois = téléchargement)...")
+            print(f"  📦  Chargement du modèle {model_id}...")
             device, dtype, label = ImageProviderManager._detect_device()
             print(f"  🖥️   Device : {label}")
+            
+            if "CPU" in label and "LENT" in label:
+                print(f"  ⚠️   ATTENTION : Génération en CPU sera très lente !")
+                print(f"      Pour accélérer : pip install torch-directml (Windows/WSL)")
+                print(f"      Ou installer CUDA pour NVIDIA GPU\n")
+            
+            print(f"  ⏳  Téléchargement du modèle (~2 Go pour sd-turbo)...")
             is_dml = not isinstance(device, str)
             pipe = AutoPipelineForText2Image.from_pretrained(
                 model_id,
@@ -174,7 +177,7 @@ class ImageProviderManager:
             pipe.set_progress_bar_config(disable=True)
             ImageProviderManager._gen_local._pipe = pipe
             ImageProviderManager._gen_local._model_id = model_id
-            print("  ✅  Modèle prêt")
+            print("  ✅  Modèle chargé et prêt")
 
         try:
             is_turbo = "turbo" in model_id.lower() or "lightning" in model_id.lower()

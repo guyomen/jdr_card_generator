@@ -6,6 +6,7 @@ Utilise reportlab pour créer des cartes au format PDF imprimables.
 import os
 import sys
 import json
+import glob
 from pathlib import Path
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
@@ -128,6 +129,59 @@ class CardGenerator:
             cards += self.load_json(armures, "armure")
         if autres:
             cards += self.load_json(autres, "equipement")
+        return cards
+
+    @staticmethod
+    def detect_type_from_filename(filename: str) -> str:
+        """
+        Détecte le type de carte basé sur le nom du fichier
+        
+        Args:
+            filename: Nom du fichier (ex: armes.json, armures.json, autre.json)
+        
+        Returns:
+            Type de carte (arme, armure, ou equipement)
+        """
+        filename_lower = filename.lower()
+        if "arme" in filename_lower:
+            return "arme"
+        elif "armure" in filename_lower:
+            return "armure"
+        else:
+            return "equipement"
+
+    def load_cards_from_input(self, input_path: str) -> list:
+        """
+        Charge les cartes depuis un fichier ou un dossier
+        Détecte automatiquement le type de carte
+        
+        Args:
+            input_path: Chemin vers un fichier JSON ou un dossier contenant des JSONs
+        
+        Returns:
+            Liste complète de toutes les cartes chargées
+        """
+        cards = []
+        
+        if os.path.isdir(input_path):
+            # Charger tous les fichiers JSON du dossier
+            json_files = sorted(glob.glob(os.path.join(input_path, "*.json")))
+            if not json_files:
+                print(f"❌  Aucun fichier JSON trouvé dans {input_path}", file=sys.stderr)
+                sys.exit(1)
+            
+            for filepath in json_files:
+                filename = os.path.basename(filepath)
+                card_type = self.detect_type_from_filename(filename)
+                loaded = self.load_json(filepath, card_type)
+                print(f"  📁 {filename}: {len(loaded)} {card_type}(s)")
+                cards.extend(loaded)
+        else:
+            # Charger un fichier spécifique
+            filename = os.path.basename(input_path)
+            card_type = self.detect_type_from_filename(filename)
+            cards = self.load_json(input_path, card_type)
+        
         return cards
 
     def fetch_images_for_cards(self, cards: list, provider: str = "pollinations",
