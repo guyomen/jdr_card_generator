@@ -1,0 +1,5 @@
+[
+  { "nom": "Épée longue",  "sous_type": "Corps à corps", "dm": "1d8+FOR",  "portee": "Mêlée",      "regles": "Peut être tenue à une ou deux mains. À deux mains : +2 DM." },
+  { "nom": "Arc court",    "sous_type": "Distance",      "dm": "1d6+DEX",  "portee": "30 / 90 m",  "regles": "Nécessite deux mains. Munitions : flèches. Rechargement libre." },
+  { "nom": "Dague",        "sous_type": "Corps à corps", "dm": "1d4+FOR",  "portee": "Mêlée / 6m", "regles": "Peut être lancée. Finesse : utiliser DEX à la place de FOR." }
+]

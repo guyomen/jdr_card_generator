@@ -1,0 +1,5 @@
+[
+  { "nom": "Cuir bouilli",      "sous_type": "Armure légère",        "def": "11 + AGI", "max_agi": "+4", "regles": "Aucun malus au déplacement. Discrétion possible." },
+  { "nom": "Cotte de mailles",  "sous_type": "Armure intermédiaire", "def": "14 + AGI", "max_agi": "+2", "regles": "Désavantage aux jets de discrétion. Force minimum : 10." },
+  { "nom": "Armure de plates",  "sous_type": "Armure lourde",        "def": "18",        "max_agi": "+0", "regles": "Désavantage à la discrétion. FOR min 15. Ne pas nager sans risque." }
+]
