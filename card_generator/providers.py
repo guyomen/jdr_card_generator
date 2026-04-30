@@ -9,10 +9,14 @@ import re
 import json
 import time
 import base64
+import warnings
 import urllib.request
 import urllib.parse
 
 from .exceptions import CardGeneratorError
+
+# Supprime les warnings de dépréciation internes à huggingface_hub/diffusers
+warnings.filterwarnings("ignore", message=".*local_dir_use_symlinks.*")
 
 # Désactive les custom ops CUDA pour éviter les incompatibilités torch/diffusers
 os.environ["DIFFUSERS_DISABLE_CUDA_CUSTOM_OPS"] = "1"
@@ -148,10 +152,11 @@ class ImageProviderManager:
         try:
             import torch
             from diffusers import AutoPipelineForText2Image
+            import transformers  # noqa: F401
         except ImportError:
             raise CardGeneratorError(
                 "Packages manquants pour --provider local:\n"
-                "    pip install diffusers torch accelerate pillow\n"
+                "    pip install diffusers torch transformers torchvision accelerate pillow\n"
                 "    (AMD/WSL) pip install torch-directml"
             )
 

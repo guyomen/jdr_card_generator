@@ -9,6 +9,26 @@ from .generator import CardGenerator
 from .exceptions import CardGeneratorError
 
 
+def _ensure_hf_login():
+    """Vérifie que l'utilisateur est authentifié sur HuggingFace Hub"""
+    try:
+        from huggingface_hub import get_token, login
+    except ImportError:
+        return  # huggingface_hub pas installé, on laisse diffusers gérer l'erreur plus tard
+
+    if get_token():
+        return
+
+    print("🔑  Aucun token HuggingFace détecté.")
+    print("    Un token permet des téléchargements plus rapides et l'accès aux modèles privés.")
+    print()
+    try:
+        login()
+    except Exception:
+        print("⚠️   Login ignoré — les téléchargements seront anonymes (débit limité).")
+        print()
+
+
 def parse_args():
     """Parse les arguments de la ligne de commande"""
     parser = argparse.ArgumentParser(
@@ -100,6 +120,10 @@ def main():
     if args.generate_image and args.provider == "openai" and not args.api_key:
         print("❌  --provider openai requiert --api_key")
         sys.exit(1)
+
+    # Vérifie le login HuggingFace pour les providers qui téléchargent des modèles
+    if args.generate_image and args.provider == "local":
+        _ensure_hf_login()
 
     # Crée le générateur
     generator = CardGenerator(cache_dir=args.image_cache)

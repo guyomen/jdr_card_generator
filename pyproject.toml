@@ -37,6 +37,8 @@ dependencies = [
 images-local = [
     "diffusers>=0.20.0",
     "torch>=2.0.0",
+    "transformers>=4.25.0",
+    "torchvision>=0.15.0",
     "accelerate>=0.20.0",
     "pillow>=9.0.0",
 ]
