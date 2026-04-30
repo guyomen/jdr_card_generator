@@ -15,6 +15,9 @@ import urllib.parse
 
 from .exceptions import CardGeneratorError
 
+# Style de dessin appliqué à tous les prompts IA (défini dans le code, pas dans le JSON)
+# The prompt suffix is intentionally in English to match the card descriptions.
+IMAGE_STYLE_SUFFIX = "hand-drawn sketch, minimal color, almost black and white"
 # Supprime les warnings de dépréciation internes à huggingface_hub/diffusers
 warnings.filterwarnings("ignore", message=".*local_dir_use_symlinks.*")
 
@@ -29,11 +32,20 @@ def _safe_filename(name: str) -> str:
 
 def _build_prompt(card: dict) -> str:
     """Récupère le prompt IA depuis le champ description_ia de la carte"""
-    prompt = card.get("description_ia", "")
+    prompt = (card.get("description_ia", "") or "").strip()
     if not prompt:
-        print(f"⚠️   Attention : la carte '{card.get('nom', 'inconnu')}' n'a pas de champ 'description_ia'", file=sys.stderr)
+        print(
+            f"⚠️   Attention : la carte '{card.get('nom', 'inconnu')}' n'a pas de champ 'description_ia'",
+            file=sys.stderr,
+        )
         return ""
-    return prompt
+    # Ajoute le style de dessin depuis le code (ne pas le mettre dans le JSON)
+    style = IMAGE_STYLE_SUFFIX
+    if prompt.endswith((".", "!", "?")):
+        final = f"{prompt} {style}"
+    else:
+        final = f"{prompt}. {style}"
+    return final
 
 
 class ImageProviderManager:

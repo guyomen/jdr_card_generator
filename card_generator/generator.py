@@ -299,11 +299,21 @@ class CardGenerator:
         )
         c.setFillColor(lighter)
         c.roundRect(x, header_y + header_h - 2.5 * mm, CARD_W, 2.5 * mm, radius=3 * mm, stroke=0, fill=1)
-        # Nom de l'objet
-        name_y = header_y + header_h * 0.32
-        c.setFont("Helvetica-Bold", 9)
+        # Nom de l'objet — font size augmenté mais contenu adapté si nécessaire
+        name = card.get("nom", "???")
+        desired_title_size = 11  # points (augmenté sans changer la cartouche)
+        max_name_width = CARD_W - 8 * mm  # laisser un peu de marge à gauche/droite
+
+        # Réduire la taille si le nom est trop long pour tenir dans la largeur
+        title_size = desired_title_size
+        while title_size > 5 and c.stringWidth(name, "Helvetica-Bold", title_size) > max_name_width:
+            title_size -= 0.5
+
+        c.setFont("Helvetica-Bold", title_size)
         c.setFillColor(pal["header_fg"])
-        c.drawCentredString(x + CARD_W / 2, name_y, card.get("nom", "???"))
+        # Position verticale : centre approximatif en tenant compte de la taille de police
+        name_y = header_y + (header_h - title_size) / 2 + title_size * 0.25
+        c.drawCentredString(x + CARD_W / 2, name_y, name)
 
         # ── Image + Badge type vertical à gauche ──────────────────────
         image_path = card.get("image")
