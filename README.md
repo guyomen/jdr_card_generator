@@ -4,19 +4,16 @@ Générateur de cartes JDR au format PDF avec support des images générées par
 
 ## Caractéristiques
 
-- **Génération PDF** : Cartes imprimables au format A4 avec mises en page configurables
-- **Gestion d'images IA** : Support de plusieurs fournisseurs d'images
-  - Pollinations (en ligne, gratuit)
+- **Génération PDF** : Cartes imprimables au format A4 avec repères de coupe
+- **Templates personnalisables** : Couleurs et labels définis directement dans les fichiers JSON
+- **Gestion d'images IA** : Support de plusieurs fournisseurs
+  - Pollinations (en ligne, gratuit, sans clé)
   - HuggingFace Diffusers (local, GPU/CPU)
   - Automatic1111 / ComfyUI (API locale)
   - OpenAI DALL-E 3
-- **Palettes de couleurs** : Thèmes différents pour armes, armures et équipements
 - **Cache d'images** : Évite de régénérer les images existantes
-- **Format JSON** : Données simples et transportables
 
 ## Installation
-
-### Installation standard
 
 ```bash
 pip install .
@@ -37,196 +34,187 @@ pip install ".[images-openai]"
 
 ## Usage
 
+### Commande rapide (dev)
+
+```bash
+python run.py --input data
+```
+
 ### CLI (après installation)
 
 ```bash
-# Générer des cartes sans images
-jdr-cards --arme data/armes.json --armure data/armures.json --autre data/equipements.json
+# Générer des cartes depuis un dossier (détecte le type via _meta)
+jdr-cards --input data/
 
-# Générer des cartes avec images (fournisseur par défaut)
-jdr-cards --arme data/armes.json --generate_image
+# Générer depuis un fichier spécifique
+jdr-cards --input data/arme.json
 
-# Utiliser HuggingFace Diffusers local
-jdr-cards --arme data/armes.json --generate_image --provider local
+# Fichiers séparés
+jdr-cards --arme data/arme.json --armure data/armure.json --autre data/autre.json
 
-# Utiliser une API locale (Automatic1111)
-jdr-cards --arme data/armes.json --generate_image --provider localapi --api_url http://localhost:7860
+# Avec images IA (Pollinations, gratuit)
+jdr-cards --input data --generate_image
 
-# Utiliser OpenAI DALL-E
-jdr-cards --arme data/armes.json --generate_image --provider openai --api_key sk-...
+# Avec images locales (HuggingFace Diffusers)
+jdr-cards --input data --generate_image --provider local
+
+# Avec API locale (Automatic1111)
+jdr-cards --input data --generate_image --provider localapi --api_url http://localhost:7860
+
+# Avec OpenAI DALL-E
+jdr-cards --input data --generate_image --provider openai --api_key sk-...
 ```
 
 ### Module Python
 
 ```python
 from card_generator import CardGenerator
-from pathlib import Path
 
 gen = CardGenerator()
-cards = gen.load_cards_from_files(
-    armes="data/armes.json",
-    armures="data/armures.json",
-    autres="data/equipements.json"
-)
-
-gen.generate_cards(cards, output_path="output/cartes.pdf")
+cards = gen.load_cards_from_input("data/")
+gen.generate_cards(cards, output_path="cartes_jdr.pdf")
 ```
 
 ## Format JSON
 
-### Armes
+Chaque fichier JSON suit ce format :
 
 ```json
-[
-  {
-    "nom": "Épée longue",
-    "sous_type": "Épée",
-    "dm": "1d8+2",
-    "portee": "Mêlée",
-    "regles": "Lame d'acier forgée par des maîtres armuriers.",
-    "image": "path/to/image.png"
-  }
-]
+{
+  "_meta": {
+    "type": "arme",
+    "template": {
+      "label": "ARME",
+      "header_bg": "#C17B7B",
+      "header_fg": "#FFFFFF",
+      "stats_bg": "#FAF0EC",
+      "stats_fg": "#5A2A2A",
+      "border": "#B09090",
+      "tag_bg": "#D4A0A0",
+      "tag_fg": "#3D1515"
+    }
+  },
+  "items": [
+    {
+      "nom": "Épée longue",
+      "sous_type": "Corps à corps",
+      "dm": "1d8+FOR",
+      "portee": "Mêlée",
+      "regles": "Peut être tenue à une ou deux mains.",
+      "description_ia": "basic long sword, medieval fantasy weapon..."
+    }
+  ]
+}
 ```
 
-### Armures
+### Champs `_meta`
 
-```json
-[
-  {
-    "nom": "Armure de chevalier",
-    "sous_type": "Plaques d'acier",
-    "def": "+4",
-    "max_agi": "-1",
-    "info": "Armure complète de plaques d'acier."
-  }
-]
+| Champ | Description |
+|-------|-------------|
+| `type` | Type de carte : `arme`, `armure`, `equipement` (ou tout type custom) |
+| `template` | Palette de couleurs de la carte (optionnel, des valeurs par défaut existent) |
+
+### Clés du template
+
+| Clé | Description |
+|-----|-------------|
+| `label` | Texte du badge de type (ex: "ARME", "SORT", "PIÈGE") |
+| `header_bg` | Couleur de fond de l'en-tête |
+| `header_fg` | Couleur du texte de l'en-tête |
+| `stats_bg` | Couleur de fond du bloc stats |
+| `stats_fg` | Couleur du texte des stats |
+| `border` | Couleur des bordures |
+| `tag_bg` | Couleur de fond du badge type |
+| `tag_fg` | Couleur du texte du badge type |
+
+### Champs par type de carte
+
+**Armes** : `nom`, `sous_type`, `dm`, `portee`, `regles`, `description_ia`
+
+**Armures** : `nom`, `sous_type`, `def`, `max_agi`, `regles`, `description_ia`
+
+**Équipements** : `nom`, `sous_type`, `stats` (dict libre), `info`, `description_ia`
+
+## HuggingFace — Configuration du token
+
+Pour le provider `local`, le modèle est téléchargé depuis HuggingFace Hub (~2 Go pour sd-turbo).
+
+Un token HuggingFace (gratuit) permet :
+- Des téléchargements plus rapides (pas de limite de débit)
+- L'accès aux modèles privés/gated
+
+### Créer un token
+
+1. Aller sur https://huggingface.co/settings/tokens
+2. Créer un token avec le scope **Read** (lecture seule suffit pour les modèles publics)
+
+### Configurer le token
+
+```bash
+# Option 1 : Login interactif (stocke le token localement)
+huggingface-cli login
+
+# Option 2 : Variable d'environnement
+export HF_TOKEN=hf_xxxxxxxxxxxxxxxxxxxxx        # Linux/Mac
+$env:HF_TOKEN = "hf_xxxxxxxxxxxxxxxxxxxxx"      # PowerShell
 ```
 
-### Équipements
-
-```json
-[
-  {
-    "nom": "Torche magique",
-    "sous_type": "Accessoire",
-    "stats": {
-      "Portée lumière": "20m",
-      "Durée": "Infini"
-    },
-    "regles": "Éclaire sans flamme."
-  }
-]
-```
-
-## Structure du projet
-
-```
-card-generator/
-├── pyproject.toml          # Configuration du projet
-├── README.md               # Ce fichier
-├── .gitignore              # Fichiers à ignorer
-├── card_generator/         # Package principal
-│   ├── __init__.py
-│   ├── __main__.py         # Permet: python -m card_generator
-│   ├── cli.py              # Interface en ligne de commande
-│   ├── generator.py        # Logique principale
-│   └── providers.py        # Providers d'images (optionnel)
-├── data/                   # Données d'exemple
-│   ├── armes.json
-│   ├── armures.json
-│   └── equipements.json
-├── tests/                  # Tests unitaires
-└── output/                 # Résultats (généré)
-    └── cartes_jdr.pdf
-```
+> **Note** : Si aucun token n'est configuré, l'application proposera automatiquement le login interactif au lancement avec `--provider local`.
 
 ## Providers d'images IA
 
 ### Pollinations (par défaut)
 
-- **Avantage** : Gratuit, sans configuration
-- **Inconvénient** : Limites de taux, serveur externe
-- **Installation** : Rien à faire
+- **Avantage** : Gratuit, sans configuration, sans GPU
+- **Inconvénient** : Limites de taux, dépend d'un serveur externe
 
-### HuggingFace Diffusers (Local)
+### HuggingFace Diffusers (local)
 
-- **Avantage** : Contrôle total, GPU accéléré, gratuit
-- **Inconvénient** : Installation complexe, modèles volumineux
-- **Installation** :
-  ```bash
-  pip install ".[images-local]"
-  # AMD/Intel WSL2
-  pip install torch-directml
-  ```
-- **Premiers pas** : Le modèle (~2 Go) se télécharge au premier lancement
+- **Avantage** : Contrôle total, pas de dépendance réseau après téléchargement
+- **Inconvénient** : GPU recommandé, modèles volumineux (~2 Go)
+- **Installation** : `pip install ".[images-local]"`
+- **GPU supportés** : NVIDIA CUDA, AMD/Intel via DirectML
 
 ### Automatic1111 (API locale)
 
-- **Avantage** : Interface Web, modèles multiples
-- **Inconvénient** : Configuration supplémentaire
-- **Setup** :
-  ```bash
-  # Installer Automatic1111
-  git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui
-  cd stable-diffusion-webui
-  ./webui.sh --api
-  ```
+- **Avantage** : Interface Web, choix du modèle, réglages fins
+- **Setup** : Lancer A1111 avec `--api` puis pointer avec `--api_url`
 
 ### OpenAI DALL-E 3
 
-- **Avantage** : Qualité élevée, modèle avancé
-- **Inconvénient** : Payant (coûts API)
+- **Avantage** : Haute qualité
+- **Inconvénient** : Payant
 - **Installation** : `pip install ".[images-openai]"`
+- **Requiert** : `--api_key sk-...`
 
-## Dépannage
+## Structure du projet
 
-### Erreur : "ModuleNotFoundError: No module named 'card_generator'"
-
-Installez le package en mode développement :
-```bash
-pip install -e .
 ```
-
-### Erreur GPU : "No GPU detected"
-
-Pour NVIDIA CUDA :
-```bash
-pip install --upgrade torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-```
-
-Pour AMD/Intel (WSL2) :
-```bash
-pip install torch-directml
-```
-
-### Erreur API locale : "Impossible de joindre l'API locale"
-
-Vérifiez que votre serveur (Automatic1111, ComfyUI) tourne sur le port correct :
-```bash
-jdr-cards --arme data/armes.json --generate_image --provider localapi --api_url http://localhost:7860
+jdr_card_generator/
+├── pyproject.toml
+├── README.md
+├── run.py                  # Point d'entrée dev
+├── card_generator/
+│   ├── __init__.py
+│   ├── __main__.py
+│   ├── cli.py              # Interface ligne de commande
+│   ├── exceptions.py       # Exceptions métier
+│   ├── generator.py        # Logique PDF + chargement JSON
+│   └── providers.py        # Providers d'images IA
+├── data/                   # Données d'exemple
+│   ├── arme.json
+│   ├── armure.json
+│   └── autre.json
+└── tests/
 ```
 
 ## Développement
 
 ```bash
-# Installer en mode édition avec dépendances de développement
 pip install -e ".[dev]"
-
-# Formater le code
-black card_generator/ tests/
-
-# Vérifier la qualité
-flake8 card_generator/ tests/
-
-# Lancer les tests
 pytest
 ```
 
 ## Licence
 
 MIT
-
-## Auteur
-
-À compléter dans pyproject.toml
