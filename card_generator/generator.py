@@ -414,16 +414,24 @@ class CardGenerator:
             rp = 2 * mm
             c.setFillColor(colors.HexColor("#F8F8F8"))
             c.roundRect(sx, rules_y_bot, sw, rules_h, radius=1.5 * mm, stroke=0, fill=1)
-            # Trait d'accroche coloré en haut de la zone
+            # Trait d'accroche coloré en bas de la zone
             c.setFillColor(pal["tag_bg"])
-            c.roundRect(sx, rules_y_bot + rules_h - 2 * mm, sw, 2 * mm, radius=1.5 * mm, stroke=0, fill=1)
+            c.roundRect(sx, rules_y_bot, sw, 2 * mm, radius=1.5 * mm, stroke=0, fill=1)
             c.setStrokeColor(pal["border"])
             c.setLineWidth(0.4)
             c.roundRect(sx, rules_y_bot, sw, rules_h, radius=1.5 * mm, stroke=1, fill=0)
-            self._draw_wrapped_text(
+            # Label "Règles:" en haut
+            label_y = rules_y_bot + rules_h - rp - 3 * mm
+            c.setFillColor(pal["stats_fg"])
+            c.setFont("Helvetica-Bold", 7)
+            c.drawString(sx + rp, label_y, "Règles:")
+            # Texte des règles juste sous le label, de haut en bas
+            text_y_start = label_y - 3 * mm  # Juste sous le label
+            text_max_h = rules_h - rp - 2 * mm - 3 * mm  # Espace du label jusqu'en bas
+            self._draw_wrapped_text_topdown(
                 c, texte,
-                sx + rp, rules_y_bot + rp,
-                sw - 2 * rp, rules_h - 2 * rp - 2 * mm,
+                sx + rp, text_y_start,
+                sw - 2 * rp, text_max_h,
                 "Helvetica-Oblique", 6.5,
                 colors.HexColor("#444444"), 4.2 * mm,
             )
@@ -439,21 +447,12 @@ class CardGenerator:
 
     @staticmethod
     def _draw_placeholder(c, img_x, img_y, img_w, img_h, pal=None):
-        """Dessine un placeholder pour les images manquantes"""
-        bg = colors.HexColor("#EEEEEE") if pal is None else pal["stats_bg"]
+        """Dessine un placeholder vide pour les images manquantes (case blanche avec bordure fine)"""
         border = colors.HexColor("#CCCCCC") if pal is None else pal["border"]
-        c.setFillColor(bg)
+        c.setFillColor(colors.white)
         c.setStrokeColor(border)
-        c.setLineWidth(0.8)
+        c.setLineWidth(0.6)
         c.roundRect(img_x, img_y, img_w, img_h, radius=2 * mm, stroke=1, fill=1)
-        # Diagonales
-        c.setStrokeColor(colors.HexColor("#CCCCCC"))
-        c.setLineWidth(0.4)
-        c.line(img_x + 2 * mm, img_y + 2 * mm, img_x + img_w - 2 * mm, img_y + img_h - 2 * mm)
-        c.line(img_x + img_w - 2 * mm, img_y + 2 * mm, img_x + 2 * mm, img_y + img_h - 2 * mm)
-        c.setFillColor(colors.HexColor("#999999"))
-        c.setFont("Helvetica-Oblique", 7)
-        c.drawCentredString(img_x + img_w / 2, img_y + img_h / 2 - 2 * mm, "[ image ]")
 
     @staticmethod
     def _draw_divider(c, x1, x2, y, color):
@@ -520,3 +519,43 @@ class CardGenerator:
         for line in lines:
             c.drawString(x, start_y, line)
             start_y -= line_height
+
+    @staticmethod
+    def _draw_wrapped_text_topdown(c, text, x, y_top, max_w, max_h, font, font_size, color, line_height):
+        """Dessine du texte enrobé en commençant par le haut, avec sauts de ligne à chaque point"""
+        c.setFont(font, font_size)
+        c.setFillColor(color)
+        
+        # Divise le texte par les points pour créer des phrases
+        sentences = [s.strip() for s in text.split(".") if s.strip()]
+        
+        lines = []
+        for i, sentence in enumerate(sentences):
+            words = sentence.split()
+            current = ""
+            
+            for word in words:
+                test = (current + " " + word).strip()
+                if c.stringWidth(test, font, font_size) <= max_w:
+                    current = test
+                else:
+                    if current:
+                        lines.append(current)
+                    current = word
+            
+            if current:
+                lines.append(current + ".")  # Ajoute le point à la fin de la phrase
+            
+            # Ajoute un petit espacement entre les phrases (pas la dernière)
+            if i < len(sentences) - 1:
+                lines.append("")
+        
+        # Limite au nombre de lignes qui rentre dans la zone (en tenant compte du facteur 0.5)
+        lines = lines[: int(max_h // (line_height * 0.5))]
+        current_y = y_top
+        
+        for line in lines:
+            if current_y < y_top - max_h:
+                break
+            c.drawString(x, current_y, line)
+            current_y -= line_height * 0.5  # Réduit l'espacement à 50% pour les lignes vides aussi
