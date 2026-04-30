@@ -284,14 +284,13 @@ class CardGenerator:
         c.setLineWidth(1.2)
         c.roundRect(x, y, CARD_W, CARD_H, radius=3 * mm, stroke=1, fill=1)
 
-        # ── En-tête ───────────────────────────────────────────────────
-        header_h = 16 * mm
+        # ── En-tête (compact) ─────────────────────────────────────────
+        header_h = 10 * mm
         header_y = y + CARD_H - header_h
         c.setFillColor(pal["header_bg"])
         c.roundRect(x, header_y, CARD_W, header_h, radius=3 * mm, stroke=0, fill=1)
-        # Couvre les coins arrondis bas du header
         c.rect(x, header_y, CARD_W, 3 * mm, stroke=0, fill=1)
-        # Liseré lumineux en haut du header (effet reflet)
+        # Liseré lumineux
         hb = pal["header_bg"]
         lighter = colors.Color(
             min(hb.red + 0.25, 1.0),
@@ -299,43 +298,43 @@ class CardGenerator:
             min(hb.blue + 0.25, 1.0),
         )
         c.setFillColor(lighter)
-        c.roundRect(x, header_y + header_h - 3 * mm, CARD_W, 3 * mm, radius=3 * mm, stroke=0, fill=1)
-        # Ombre du texte (légèrement décalée)
-        name_y = header_y + header_h * 0.42
-        c.setFont("Helvetica-Bold", 10)
-        darker = colors.Color(
-            max(hb.red - 0.35, 0),
-            max(hb.green - 0.35, 0),
-            max(hb.blue - 0.35, 0),
-        )
-        c.setFillColor(darker)
-        c.drawCentredString(x + CARD_W / 2 + 0.4 * mm, name_y - 0.4 * mm, card.get("nom", "???"))
-        # Texte principal
+        c.roundRect(x, header_y + header_h - 2.5 * mm, CARD_W, 2.5 * mm, radius=3 * mm, stroke=0, fill=1)
+        # Nom de l'objet
+        name_y = header_y + header_h * 0.32
+        c.setFont("Helvetica-Bold", 9)
         c.setFillColor(pal["header_fg"])
         c.drawCentredString(x + CARD_W / 2, name_y, card.get("nom", "???"))
 
-        # ── Badge type ────────────────────────────────────────────────
-        badge_h = 5 * mm
-        badge_y = header_y - badge_h * 0.55
-        badge_w = CARD_W - 10 * mm
-        badge_x = x + 5 * mm
-        c.setFillColor(pal["tag_bg"])
-        c.roundRect(badge_x, badge_y, badge_w, badge_h, radius=2 * mm, stroke=0, fill=1)
-        c.setStrokeColor(colors.white)
-        c.setLineWidth(0.6)
-        c.roundRect(badge_x, badge_y, badge_w, badge_h, radius=2 * mm, stroke=1, fill=0)
-        c.setFillColor(pal["tag_fg"])
-        c.setFont("Helvetica-Bold", 7)
-        c.drawCentredString(x + CARD_W / 2, badge_y + 1.5 * mm, pal["label"])
-
-        # ── Image ─────────────────────────────────────────────────────
-        img_margin = 3.5 * mm
-        img_h = 32 * mm
-        img_y = badge_y - img_h - 1.5 * mm
-        img_x = x + img_margin
-        img_w = CARD_W - 2 * img_margin
+        # ── Image + Badge type vertical à gauche ──────────────────────
         image_path = card.get("image")
-        if image_path and os.path.exists(image_path):
+        has_image = image_path and os.path.exists(image_path)
+        img_h = 44 * mm if has_image else 28 * mm
+        badge_w = 5 * mm
+        img_margin = 3 * mm
+        img_x = x + img_margin + badge_w + 1 * mm
+        img_y = header_y - img_h - 2 * mm
+        img_w = CARD_W - img_margin - badge_w - 1 * mm - img_margin
+
+        # Badge type vertical (rotation 90°)
+        badge_x = x + img_margin
+        badge_y_start = img_y
+        badge_h = img_h
+        c.setFillColor(pal["tag_bg"])
+        c.roundRect(badge_x, badge_y_start, badge_w, badge_h, radius=1.5 * mm, stroke=0, fill=1)
+        c.setStrokeColor(pal["border"])
+        c.setLineWidth(0.4)
+        c.roundRect(badge_x, badge_y_start, badge_w, badge_h, radius=1.5 * mm, stroke=1, fill=0)
+        # Texte vertical
+        c.saveState()
+        c.setFillColor(pal["tag_fg"])
+        c.setFont("Helvetica-Bold", 6)
+        c.translate(badge_x + badge_w / 2 + 1 * mm, badge_y_start + badge_h / 2)
+        c.rotate(90)
+        c.drawCentredString(0, 0, pal["label"])
+        c.restoreState()
+
+        # Image ou placeholder
+        if has_image:
             try:
                 img = ImageReader(image_path)
                 c.drawImage(
