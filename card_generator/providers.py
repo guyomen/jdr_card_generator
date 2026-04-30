@@ -12,6 +12,8 @@ import base64
 import urllib.request
 import urllib.parse
 
+from .exceptions import CardGeneratorError
+
 # Désactive les custom ops CUDA pour éviter les incompatibilités torch/diffusers
 os.environ["DIFFUSERS_DISABLE_CUDA_CUSTOM_OPS"] = "1"
 
@@ -104,7 +106,8 @@ class ImageProviderManager:
             req = urllib.request.Request(url, headers={"User-Agent": "jdr-card-gen/1.0"})
             with urllib.request.urlopen(req, timeout=60) as r:
                 data = r.read()
-            open(dest, "wb").write(data)
+            with open(dest, "wb") as f:
+                f.write(data)
             return True
         except Exception as e:
             print(f"⚠️  Pollinations : {e}", file=sys.stderr)
@@ -146,13 +149,11 @@ class ImageProviderManager:
             import torch
             from diffusers import AutoPipelineForText2Image
         except ImportError:
-            print(
-                "❌  Packages manquants pour --provider local:\n"
+            raise CardGeneratorError(
+                "Packages manquants pour --provider local:\n"
                 "    pip install diffusers torch accelerate pillow\n"
-                "    (AMD/WSL) pip install torch-directml",
-                file=sys.stderr,
+                "    (AMD/WSL) pip install torch-directml"
             )
-            sys.exit(1)
 
         if (
             not hasattr(ImageProviderManager._gen_local, "_pipe")
@@ -161,12 +162,12 @@ class ImageProviderManager:
             print(f"  📦  Chargement du modèle {model_id}...")
             device, dtype, label = ImageProviderManager._detect_device()
             print(f"  🖥️   Device : {label}")
-            
+
             if "CPU" in label and "LENT" in label:
                 print(f"  ⚠️   ATTENTION : Génération en CPU sera très lente !")
                 print(f"      Pour accélérer : pip install torch-directml (Windows/WSL)")
                 print(f"      Ou installer CUDA pour NVIDIA GPU\n")
-            
+
             print(f"  ⏳  Téléchargement du modèle (~2 Go pour sd-turbo)...")
             is_dml = not isinstance(device, str)
             pipe = AutoPipelineForText2Image.from_pretrained(
@@ -232,7 +233,8 @@ class ImageProviderManager:
 
             img_b64 = resp["images"][0]
             img_data = base64.b64decode(img_b64)
-            open(dest, "wb").write(img_data)
+            with open(dest, "wb") as f:
+                f.write(img_data)
             return True
         except urllib.error.URLError as e:
             print(
@@ -254,8 +256,7 @@ class ImageProviderManager:
         try:
             from openai import OpenAI
         except ImportError:
-            print("❌  pip install openai", file=sys.stderr)
-            sys.exit(1)
+            raise CardGeneratorError("Package manquant pour --provider openai: pip install openai")
 
         try:
             client = OpenAI(api_key=api_key)
@@ -265,7 +266,8 @@ class ImageProviderManager:
             img_url = response.data[0].url
             req = urllib.request.Request(img_url, headers={"User-Agent": "jdr-card-gen/1.0"})
             with urllib.request.urlopen(req, timeout=60) as r:
-                open(dest, "wb").write(r.read())
+                with open(dest, "wb") as f:
+                    f.write(r.read())
             return True
         except Exception as e:
             print(f"⚠️  OpenAI : {e}", file=sys.stderr)

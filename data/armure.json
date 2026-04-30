@@ -1,5 +1,20 @@
-[
-  { "nom": "Cuir bouilli",      "sous_type": "Armure légère",        "def": "11 + AGI", "max_agi": "+4", "regles": "Aucun malus au déplacement. Discrétion possible.", "description_ia":"boiled leather armor, medieval and fantasy light armor, hardened leather pieces shaped to fit the body, providing basic protection while allowing for mobility and stealth" },
-  { "nom": "Cotte de mailles",  "sous_type": "Armure intermédiaire", "def": "14 + AGI", "max_agi": "+2", "regles": "Désavantage aux jets de discrétion. Force minimum : 10.", "description_ia":"chainmail armor, medieval and fantasy medium armor, interlocking metal rings forming a flexible mesh, offering good protection against slashing attacks while allowing for reasonable mobility" },
-  { "nom": "Armure de plates",  "sous_type": "Armure lourde",        "def": "18",        "max_agi": "+0", "regles": "Désavantage à la discrétion. FOR min 15. Ne pas nager sans risque.", "description_ia":"plate armor, medieval and fantasy heavy armor, interlocking steel plates covering the entire body, offering superior protection at the cost of mobility and stealth" }
-]
+{
+  "_meta": {
+    "type": "armure",
+    "template": {
+      "label": "ARMURE",
+      "header_bg": "#7B9EC1",
+      "header_fg": "#FFFFFF",
+      "stats_bg": "#EBF2F9",
+      "stats_fg": "#1E3A52",
+      "border": "#8AAAC0",
+      "tag_bg": "#A0BDD4",
+      "tag_fg": "#12263A"
+    }
+  },
+  "items": [
+    { "nom": "Cuir bouilli",      "sous_type": "Armure légère",        "def": "11 + AGI", "max_agi": "+4", "regles": "Aucun malus au déplacement. Discrétion possible.", "description_ia":"boiled leather armor, medieval and fantasy light armor, hardened leather pieces shaped to fit the body, providing basic protection while allowing for mobility and stealth" },
+    { "nom": "Cotte de mailles",  "sous_type": "Armure intermédiaire", "def": "14 + AGI", "max_agi": "+2", "regles": "Désavantage aux jets de discrétion. Force minimum : 10.", "description_ia":"chainmail armor, medieval and fantasy medium armor, interlocking metal rings forming a flexible mesh, offering good protection against slashing attacks while allowing for reasonable mobility" },
+    { "nom": "Armure de plates",  "sous_type": "Armure lourde",        "def": "18",        "max_agi": "+0", "regles": "Désavantage à la discrétion. FOR min 15. Ne pas nager sans risque.", "description_ia":"plate armor, medieval and fantasy heavy armor, interlocking steel plates covering the entire body, offering superior protection at the cost of mobility and stealth" }
+  ]
+}

@@ -6,6 +6,7 @@ import sys
 import os
 import argparse
 from .generator import CardGenerator
+from .exceptions import CardGeneratorError
 
 
 def parse_args():
@@ -103,31 +104,36 @@ def main():
     # Crée le générateur
     generator = CardGenerator(cache_dir=args.image_cache)
 
-    # Charge les cartes
-    if args.input:
-        print(f"📁 Chargement depuis {args.input}...")
-        cards = generator.load_cards_from_input(args.input)
-    else:
-        cards = generator.load_cards_from_files(
-            armes=args.arme,
-            armures=args.armure,
-            autres=args.autre,
-        )
+    try:
+        # Charge les cartes
+        if args.input:
+            print(f"📁 Chargement depuis {args.input}...")
+            cards = generator.load_cards_from_input(args.input)
+        else:
+            cards = generator.load_cards_from_files(
+                armes=args.arme,
+                armures=args.armure,
+                autres=args.autre,
+            )
 
-    # Génère les images si demandé
-    if args.generate_image:
-        print(f"🎨  Génération images ({args.provider}) ...")
-        generator.fetch_images_for_cards(
-            cards,
-            provider=args.provider,
-            model=args.model,
-            api_url=args.api_url,
-            api_key=args.api_key,
-        )
+        # Génère les images si demandé
+        if args.generate_image:
+            print(f"🎨  Génération images ({args.provider}) ...")
+            generator.fetch_images_for_cards(
+                cards,
+                provider=args.provider,
+                model=args.model,
+                api_url=args.api_url,
+                api_key=args.api_key,
+            )
 
-    # Génère le PDF
-    output_file = f"{args.out}/cartes_jdr.pdf"
-    generator.generate_cards(cards, output_path=output_file)
+        # Génère le PDF
+        output_file = f"{args.out}/cartes_jdr.pdf"
+        generator.generate_cards(cards, output_path=output_file)
+
+    except CardGeneratorError as e:
+        print(f"❌  {e}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

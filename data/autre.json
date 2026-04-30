@@ -1,5 +1,20 @@
-[
-  { "nom": "Torche",       "sous_type": "Éclairage",   "stats": {"Durée": "1h",     "Portée": "6 m"},   "info": "Éclaire un rayon de 6 m de lumière vive et 6 m de pénombre. Dure 1 heure.", "description_ia":"torch, medieval and fantasy equipment, wooden stick with a cloth wrapped around one end, soaked in pitch or oil, used for illumination in dark areas" },
-  { "nom": "Corde (15 m)", "sous_type": "Utilitaire",  "stats": {"Longueur": "15 m","Charge max": "250 kg"}, "info": "Corde en chanvre solide. Supporte jusqu'à 250 kg. Indispensable en exploration.", "description_ia":"rope, medieval and fantasy equipment, sturdy hemp rope, 15 meters long, capable of supporting up to 250 kg, essential for climbing, tying, and various utility purposes in adventuring" },
-  { "nom": "Potion de soin","sous_type": "Consommable", "stats": {"Soin": "2d4+2 PV","Action": "Bonus"}, "info": "Restaure 2d4+2 PV. Action bonus pour la boire soi-même, action complète pour en faire boire un autre.", "description_ia":"healing potion, medieval and fantasy consumable, small vial containing a red liquid that restores 2d4+2 hit points when consumed, can be used as a bonus action for self-consumption or a full action to administer to another"   }
-]
+{
+  "_meta": {
+    "type": "equipement",
+    "template": {
+      "label": "EQUIPEMENT",
+      "header_bg": "#7BAE7B",
+      "header_fg": "#FFFFFF",
+      "stats_bg": "#EDF5EC",
+      "stats_fg": "#2A4A28",
+      "border": "#90B090",
+      "tag_bg": "#A4C9A2",
+      "tag_fg": "#1A3318"
+    }
+  },
+  "items": [
+    { "nom": "Torche",       "sous_type": "Éclairage",   "stats": {"Durée": "1h",     "Portée": "6 m"},   "info": "Éclaire un rayon de 6 m de lumière vive et 6 m de pénombre. Dure 1 heure.", "description_ia":"torch, medieval and fantasy equipment, wooden stick with a cloth wrapped around one end, soaked in pitch or oil, used for illumination in dark areas" },
+    { "nom": "Corde (15 m)", "sous_type": "Utilitaire",  "stats": {"Longueur": "15 m","Charge max": "250 kg"}, "info": "Corde en chanvre solide. Supporte jusqu'à 250 kg. Indispensable en exploration.", "description_ia":"rope, medieval and fantasy equipment, sturdy hemp rope, 15 meters long, capable of supporting up to 250 kg, essential for climbing, tying, and various utility purposes in adventuring" },
+    { "nom": "Potion de soin","sous_type": "Consommable", "stats": {"Soin": "2d4+2 PV","Action": "Bonus"}, "info": "Restaure 2d4+2 PV. Action bonus pour la boire soi-même, action complète pour en faire boire un autre.", "description_ia":"healing potion, medieval and fantasy consumable, small vial containing a red liquid that restores 2d4+2 hit points when consumed, can be used as a bonus action for self-consumption or a full action to administer to another" }
+  ]
+}

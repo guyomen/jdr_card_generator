@@ -7,5 +7,6 @@ __author__ = "Your Name"
 __license__ = "MIT"
 
 from .generator import CardGenerator
+from .exceptions import CardGeneratorError
 
-__all__ = ["CardGenerator"]
+__all__ = ["CardGenerator", "CardGeneratorError"]
