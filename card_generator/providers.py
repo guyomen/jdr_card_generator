@@ -155,6 +155,38 @@ class ImageProviderManager:
         return "cpu", torch.float32, "CPU ⚠️  (LENT - installe CUDA ou torch-directml pour accélérer)"
 
     @staticmethod
+    def _hf_repo_has_model_index(repo_id: str) -> bool:
+        """Vérifie rapidement si le repo Hugging Face contient un `model_index.json`.
+
+        Essaie d'abord via `huggingface_hub.HfApi.list_repo_files`, puis fallback
+        vers une requête HTTP HEAD sur le fichier `model_index.json`.
+        Utilise `HF_TOKEN`/`HUGGINGFACE_TOKEN` si fourni pour accéder aux dépôts privés.
+        """
+        token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_TOKEN")
+        try:
+            from huggingface_hub import HfApi
+
+            api = HfApi()
+            files = api.list_repo_files(repo_id)
+            return "model_index.json" in files
+        except Exception:
+            # Fallback HTTP check
+            try:
+                import urllib.request
+                import urllib.error
+
+                url = f"https://huggingface.co/{repo_id}/resolve/main/model_index.json"
+                headers = {"User-Agent": "jdr-card-gen/1.0"}
+                if token:
+                    headers["Authorization"] = f"Bearer {token}"
+                req = urllib.request.Request(url, headers=headers, method="HEAD")
+                with urllib.request.urlopen(req, timeout=10) as resp:
+                    code = getattr(resp, "status", None) or resp.getcode()
+                    return code == 200
+            except Exception:
+                return False
+
+    @staticmethod
     def _gen_local(prompt: str, dest: str, model_id: str) -> bool:
         """
         Génère une image via HuggingFace Diffusers localement
@@ -185,14 +217,69 @@ class ImageProviderManager:
                 print(f"      Pour accélérer : pip install torch-directml (Windows/WSL)")
                 print(f"      Ou installer CUDA pour NVIDIA GPU\n")
 
+            # Caching simple pour éviter de re-vérifier le repo à chaque carte
+            if not hasattr(ImageProviderManager, "_hf_model_valid_cache"):
+                ImageProviderManager._hf_model_valid_cache = {}
+
+            if model_id not in ImageProviderManager._hf_model_valid_cache:
+                print(f"  🔎  Vérification compatibilité du dépôt '{model_id}'...", end=" ", flush=True)
+                ok = ImageProviderManager._hf_repo_has_model_index(model_id)
+                ImageProviderManager._hf_model_valid_cache[model_id] = ok
+                print("✅" if ok else "❌")
+            else:
+                ok = ImageProviderManager._hf_model_valid_cache[model_id]
+
+            if not ok:
+                print(f"\n  ⚠️   Le dépôt '{model_id}' ne semble pas être un repo 'diffusers' compatible (model_index.json manquant).", file=sys.stderr)
+                print(
+                    "    Vérifiez le nom du modèle, définissez HF_TOKEN pour les modèles privés, ou utilisez un modèle compatible 'diffusers' (ex: stabilityai/stable-diffusion-xl-base-1.0).",
+                    file=sys.stderr,
+                )
+                return False
+
             print(f"  ⏳  Téléchargement du modèle (~2 Go pour sd-turbo)...")
             is_dml = not isinstance(device, str)
-            pipe = AutoPipelineForText2Image.from_pretrained(
-                model_id,
-                torch_dtype=dtype,
-                variant="fp16" if dtype == torch.float16 and not is_dml else None,
-            ).to(device)
-            pipe.set_progress_bar_config(disable=True)
+
+            hf_token = os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_TOKEN")
+
+            # Use float32 for compatibility with all models (fp16 variant may not exist)
+            try:
+                pipe = AutoPipelineForText2Image.from_pretrained(
+                    model_id,
+                    torch_dtype=torch.float32,
+                    **({"use_auth_token": hf_token} if hf_token else {}),
+                ).to(device)
+            except Exception as e:
+                # Common cause: the repo is not a `diffusers` pipeline (no model_index.json)
+                errstr = str(e)
+                if "model_index.json" in errstr or "Entry Not Found" in errstr or "404" in errstr:
+                    print(f"\n  ⚠️   Le dépôt '{model_id}' ne semble pas être un repo 'diffusers' compatible (fichier model_index.json manquant).", file=sys.stderr)
+                    print("      Tentative de fallback avec `DiffusionPipeline.from_pretrained`...", file=sys.stderr)
+                    try:
+                        from diffusers import DiffusionPipeline
+
+                        pipe = DiffusionPipeline.from_pretrained(
+                            model_id,
+                            torch_dtype=torch.float32,
+                            **({"use_auth_token": hf_token} if hf_token else {}),
+                        ).to(device)
+                    except Exception as e2:
+                        print(f"  ❌  Échec du fallback pour '{model_id}': {e2}", file=sys.stderr)
+                        print(
+                            "    Vérifiez que le nom du modèle est correct, que le modèle est public, ou utilisez un modèle compatible 'diffusers' (ex: stabilityai/stable-diffusion-xl-base-1.0).",
+                            file=sys.stderr,
+                        )
+                        return False
+                else:
+                    print(f"  ❌  Erreur lors du chargement du modèle '{model_id}': {e}", file=sys.stderr)
+                    return False
+
+            try:
+                pipe.set_progress_bar_config(disable=True)
+            except Exception:
+                # Certaines variantes de pipeline n'ont pas set_progress_bar_config
+                pass
+
             ImageProviderManager._gen_local._pipe = pipe
             ImageProviderManager._gen_local._model_id = model_id
             print("  ✅  Modèle chargé et prêt")

@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
-    {name = "Guillaume GABRIEL, email = "guyomen@gmail.com"},
+    {name = "Guillaume GABRIEL", email = "guyomen@gmail.com"},
 ]
 keywords = ["jdr", "rpg", "cards", "pdf", "ai", "diffusers"]
 classifiers = [
