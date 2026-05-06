@@ -13,14 +13,14 @@
     }
   },
   "items": [
-    { "nom": "Tissus matelassés", "sous_type": "Armure légère", "def": "+1", "max_agi": "+7", "regles": "", "description_ia": "padded cloth armor, medieval fantasy light armor, layers of quilted fabric providing minimal protection while allowing full mobility" },
-    { "nom": "Cuir simple", "sous_type": "Armure légère", "def": "+2", "max_agi": "+6", "regles": "", "description_ia": "simple leather armor, medieval fantasy light armor, tanned hide shaped into a breastplate and bracers" },
-    { "nom": "Cuir renforcé", "sous_type": "Armure intermédiaire", "def": "+3", "max_agi": "+5", "regles": "", "description_ia": "reinforced leather armor, medieval fantasy medium armor, hardened leather with metal studs and rivets for added protection" },
-    { "nom": "Chemise de mailles", "sous_type": "Armure intermédiaire", "def": "+4", "max_agi": "+4", "regles": "", "description_ia": "chainmail shirt, medieval fantasy medium armor, short-sleeved shirt of interlocking metal rings worn over padding" },
-    { "nom": "Cotte de mailles", "sous_type": "Armure lourde", "def": "+5", "max_agi": "+3", "regles": "", "description_ia": "full chainmail, medieval fantasy heavy armor, long coat of interlocking metal rings covering torso and limbs" },
-    { "nom": "Armure de plaques", "sous_type": "Armure lourde", "def": "+6", "max_agi": "+2", "regles": "", "description_ia": "plate armor, medieval fantasy heavy armor, interlocking steel plates covering the body with chainmail at joints" },
-    { "nom": "Plaque complète", "sous_type": "Armure lourde", "def": "+7", "max_agi": "+1", "regles": "Fabriquée sur mesure. Réservée au chevalier (voie de la noblesse rang 3).", "description_ia": "full plate armor, medieval fantasy heavy armor, masterwork custom-fitted steel plates covering every inch of the body, ornate and imposing" },
-    { "nom": "Petit bouclier", "sous_type": "Bouclier", "def": "+1", "max_agi": "—", "regles": "", "description_ia": "small shield, medieval fantasy buckler, round wooden shield with iron boss and leather grip" },
-    { "nom": "Grand bouclier", "sous_type": "Bouclier", "def": "+2", "max_agi": "—", "regles": "", "description_ia": "large shield, medieval fantasy kite shield, tall steel-rimmed wooden shield with heraldic design" }
+    { "nom": "Tissus matelassés", "sous_type": "Armure légère", "def": "+1", "max_agi": "+7", "regles": "", "description_ia": "quilted cloth armor" },
+    { "nom": "Cuir simple", "sous_type": "Armure légère", "def": "+2", "max_agi": "+6", "regles": "", "description_ia": "simple leather armor" },
+    { "nom": "Cuir renforcé", "sous_type": "Armure intermédiaire", "def": "+3", "max_agi": "+5", "regles": "", "description_ia": "studded leather armor" },
+    { "nom": "Chemise de mailles", "sous_type": "Armure intermédiaire", "def": "+4", "max_agi": "+4", "regles": "", "description_ia": "short chainmail shirt" },
+    { "nom": "Cotte de mailles", "sous_type": "Armure lourde", "def": "+5", "max_agi": "+3", "regles": "", "description_ia": "full chainmail coat" },
+    { "nom": "Armure de plaques", "sous_type": "Armure lourde", "def": "+6", "max_agi": "+2", "regles": "", "description_ia": "plate armor" },
+    { "nom": "Plaque complète", "sous_type": "Armure lourde", "def": "+7", "max_agi": "+1", "regles": "Fabriquée sur mesure. Réservée au chevalier (voie de la noblesse rang 3).", "description_ia": "full plate armor" },
+    { "nom": "Petit bouclier", "sous_type": "Bouclier", "def": "+1", "max_agi": "—", "regles": "", "description_ia": "small round shield" },
+    { "nom": "Grand bouclier", "sous_type": "Bouclier", "def": "+2", "max_agi": "—", "regles": "", "description_ia": "large kite shield" }
   ]
 }

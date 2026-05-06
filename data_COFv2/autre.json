@@ -13,18 +13,18 @@
     }
   },
   "items": [
-    { "nom": "Briquet à silex", "sous_type": "Utilitaire", "stats": {"Prix": "1 pa"}, "info": "Permet d'allumer un feu.", "description_ia": "flint and steel tinderbox, medieval fantasy adventuring gear, small metal box with flint striker for starting fires" },
-    { "nom": "Carquois (20 flèches)", "sous_type": "Munitions", "stats": {"Prix": "3 pa", "Contenu": "20 flèches"}, "info": "Contient 20 flèches pour arc.", "description_ia": "quiver with arrows, medieval fantasy equipment, leather quiver holding twenty feathered arrows with iron tips" },
-    { "nom": "Corde (15 m)", "sous_type": "Utilitaire", "stats": {"Prix": "2 pa", "Longueur": "15 m"}, "info": "Corde en chanvre solide. Indispensable en exploration.", "description_ia": "hemp rope, medieval fantasy adventuring gear, sturdy 15-meter coil of braided rope for climbing and tying" },
-    { "nom": "Couverture", "sous_type": "Campement", "stats": {"Prix": "1 pa"}, "info": "Protection contre le froid pour dormir en extérieur.", "description_ia": "wool blanket, medieval fantasy camping gear, thick woven blanket for warmth during outdoor rests" },
-    { "nom": "Grappin", "sous_type": "Utilitaire", "stats": {"Prix": "2 pa"}, "info": "S'accroche à une corde pour escalader murs et falaises.", "description_ia": "grappling hook, medieval fantasy adventuring gear, three-pronged iron hook attached to a rope for climbing" },
-    { "nom": "Lanterne à huile", "sous_type": "Éclairage", "stats": {"Prix": "3 pa", "Durée": "6h", "Portée": "10 m"}, "info": "Éclaire dans un rayon de 10 m pendant 6h (1 dose d'huile).", "description_ia": "oil lantern, medieval fantasy equipment, brass lantern with glass panels casting warm light in a 10m radius" },
-    { "nom": "Huile pour lanterne", "sous_type": "Consommable", "stats": {"Prix": "1 pa", "Durée": "6h"}, "info": "Une dose d'huile pour 6h d'éclairage.", "description_ia": "lamp oil flask, medieval fantasy consumable, small ceramic flask of refined oil for lanterns" },
-    { "nom": "Matériel d'écriture", "sous_type": "Utilitaire", "stats": {"Prix": "5 pa"}, "info": "Parchemin, encre et plume pour écrire.", "description_ia": "writing materials, medieval fantasy equipment, quill pen, ink pot, and rolled parchment sheets" },
-    { "nom": "Torches (x3)", "sous_type": "Éclairage", "stats": {"Prix": "1 pa", "Durée": "1h/torche", "Portée": "10 m"}, "info": "Éclaire dans un rayon de 10 m pendant 1h.", "description_ia": "bundle of three torches, medieval fantasy equipment, wooden sticks with oil-soaked cloth tips for illumination" },
-    { "nom": "Outils de crochetage", "sous_type": "Utilitaire", "stats": {"Prix": "5 pa"}, "info": "Sans ces outils, -10 aux tests d'AGI (Crocheter).", "description_ia": "lockpicking tools, medieval fantasy thieves tools, leather pouch containing picks, tension wrenches and rakes" },
-    { "nom": "Potion de soins", "sous_type": "Consommable", "stats": {"Prix": "10 pa", "Soin": "1d4 PV"}, "info": "Restaure 1d4 PV. Max 1 potion par récupération rapide (30 min).", "description_ia": "healing potion, medieval fantasy consumable, small glass vial containing a glowing red herbal remedy" },
-    { "nom": "Ration (1 semaine)", "sous_type": "Consommable", "stats": {"Prix": "4 pa", "Durée": "7 jours"}, "info": "Nourriture séchée pour une semaine de voyage.", "description_ia": "trail rations, medieval fantasy provisions, wrapped bundle of dried meat, hardtack, and dried fruits" },
-    { "nom": "Sac à dos", "sous_type": "Utilitaire", "stats": {"Prix": "1 pa"}, "info": "Contient l'équipement de l'aventurier.", "description_ia": "adventurer backpack, medieval fantasy equipment, large leather and canvas backpack with multiple pouches and straps" }
+    { "nom": "Briquet à silex", "sous_type": "Utilitaire", "stats": {"Prix": "1 pa"}, "info": "Permet d'allumer un feu.", "description_ia": "flint and steel" },
+    { "nom": "Carquois (20 flèches)", "sous_type": "Munitions", "stats": {"Prix": "3 pa", "Contenu": "20 flèches"}, "info": "Contient 20 flèches pour arc.", "description_ia": "quiver with twenty arrows" },
+    { "nom": "Corde (15 m)", "sous_type": "Utilitaire", "stats": {"Prix": "2 pa", "Longueur": "15 m"}, "info": "Corde en chanvre solide. Indispensable en exploration.", "description_ia": "coiled hemp rope" },
+    { "nom": "Couverture", "sous_type": "Campement", "stats": {"Prix": "1 pa"}, "info": "Protection contre le froid pour dormir en extérieur.", "description_ia": "wool blanket" },
+    { "nom": "Grappin", "sous_type": "Utilitaire", "stats": {"Prix": "2 pa"}, "info": "S'accroche à une corde pour escalader murs et falaises.", "description_ia": "iron grappling hook" },
+    { "nom": "Lanterne à huile", "sous_type": "Éclairage", "stats": {"Prix": "3 pa", "Durée": "6h", "Portée": "10 m"}, "info": "Éclaire dans un rayon de 10 m pendant 6h (1 dose d'huile).", "description_ia": "oil lantern" },
+    { "nom": "Huile pour lanterne", "sous_type": "Consommable", "stats": {"Prix": "1 pa", "Durée": "6h"}, "info": "Une dose d'huile pour 6h d'éclairage.", "description_ia": "small oil flask" },
+    { "nom": "Matériel d'écriture", "sous_type": "Utilitaire", "stats": {"Prix": "5 pa"}, "info": "Parchemin, encre et plume pour écrire.", "description_ia": "quill, ink pot, and parchment" },
+    { "nom": "Torches (x3)", "sous_type": "Éclairage", "stats": {"Prix": "1 pa", "Durée": "1h/torche", "Portée": "10 m"}, "info": "Éclaire dans un rayon de 10 m pendant 1h.", "description_ia": "three torches" },
+    { "nom": "Outils de crochetage", "sous_type": "Utilitaire", "stats": {"Prix": "5 pa"}, "info": "Sans ces outils, -10 aux tests d'AGI (Crocheter).", "description_ia": "lockpicking tools pouch" },
+    { "nom": "Potion de soins", "sous_type": "Consommable", "stats": {"Prix": "10 pa", "Soin": "1d4 PV"}, "info": "Restaure 1d4 PV. Max 1 potion par récupération rapide (30 min).", "description_ia": "small glass vial with red liquid" },
+    { "nom": "Ration (1 semaine)", "sous_type": "Consommable", "stats": {"Prix": "4 pa", "Durée": "7 jours"}, "info": "Nourriture séchée pour une semaine de voyage.", "description_ia": "dried food bundle" },
+    { "nom": "Sac à dos", "sous_type": "Utilitaire", "stats": {"Prix": "1 pa"}, "info": "Contient l'équipement de l'aventurier.", "description_ia": "leather backpack" }
   ]
 }
