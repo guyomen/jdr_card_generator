@@ -58,6 +58,9 @@ jdr-cards --input data --generate_image
 # Avec images locales (HuggingFace Diffusers)
 jdr-cards --input data --generate_image --provider local
 
+# Avec images locales (HuggingFace Diffusers et model specifique)
+jdr-cards --input data --generate_image --provider local --model advokat/AnimePro-FLUX
+
 # Avec API locale (Automatic1111)
 jdr-cards --input data --generate_image --provider localapi --api_url http://localhost:7860
 
