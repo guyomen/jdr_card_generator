@@ -1,0 +1,10 @@
+nom,sous_type,def,max_agi,regles,image_path
+Tissus matelassés,Armure légère,+1,+7,,./images/quilted_cloth.png
+Cuir simple,Armure légère,+2,+6,,./images/leather_armor.png
+Cuir renforcé,Armure intermédiaire,+3,+5,,./images/studded_leather.png
+Chemise de mailles,Armure intermédiaire,+4,+4,,./images/chainmail_shirt.png
+Cotte de mailles,Armure lourde,+5,+3,,./images/chainmail_coat.png
+Armure de plaques,Armure lourde,+6,+2,,./images/plate_armor.png
+Plaque complète,Armure lourde,+7,+1,Fabriquée sur mesure. Réservée au chevalier (voie de la noblesse rang 3).,./images/full_plate.png
+Petit bouclier,Bouclier,+1,—,,./images/small_shield.png
+Grand bouclier,Bouclier,+2,—,,./images/kite_shield.png

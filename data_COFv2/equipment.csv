@@ -1,0 +1,14 @@
+nom,sous_type,stats,info,image_path
+Briquet à silex,Utilitaire,Prix: 1 pa,Permet d'allumer un feu.,./images/flint_and_steel.png
+Carquois (20 flèches),Munitions,Prix: 3 pa; Contenu: 20 flèches,Contient 20 flèches pour arc.,./images/quiver.png
+Corde (15 m),Utilitaire,Prix: 2 pa; Longueur: 15 m,Corde en chanvre solide. Indispensable en exploration.,./images/rope.png
+Couverture,Campement,Prix: 1 pa,Protection contre le froid pour dormir en extérieur.,./images/blanket.png
+Grappin,Utilitaire,Prix: 2 pa,S'accroche à une corde pour escalader murs et falaises.,./images/grappling_hook.png
+Lanterne à huile,Éclairage,Prix: 3 pa; Durée: 6h; Portée: 10 m,Éclaire dans un rayon de 10 m pendant 6h (1 dose d'huile).,./images/oil_lantern.png
+Huile pour lanterne,Consommable,Prix: 1 pa; Durée: 6h,Une dose d'huile pour 6h d'éclairage.,./images/lamp_oil.png
+Matériel d'écriture,Utilitaire,Prix: 5 pa,"Parchemin, encre et plume pour écrire.",./images/writing_kit.png
+Torches (x3),Éclairage,Prix: 1 pa; Durée: 1h/torche; Portée: 10 m,Éclaire dans un rayon de 10 m pendant 1h.,./images/torches.png
+Outils de crochetage,Utilitaire,Prix: 5 pa,"Sans ces outils, -10 aux tests d'AGI (Crocheter).",./images/lockpicking_tools.png
+Potion de soins,Consommable,Prix: 10 pa; Soin: 1d4 PV,Restaure 1d4 PV. Max 1 potion par récupération rapide (30 min).,./images/healing_potion.png
+Ration (1 semaine),Consommable,Prix: 4 pa; Durée: 7 jours,Nourriture séchée pour une semaine de voyage.,./images/rations.png
+Sac à dos,Utilitaire,Prix: 1 pa,Contient l'équipement de l'aventurier.,./images/backpack.png

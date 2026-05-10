@@ -5,6 +5,7 @@ Utilise reportlab pour créer des cartes au format PDF imprimables.
 
 import os
 import json
+import csv
 import glob
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
@@ -12,7 +13,6 @@ from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
 
-from .providers import ImageProviderManager
 from .exceptions import CardGeneratorError
 
 
@@ -26,50 +26,58 @@ MIN_COLS = 3
 CUT_MARK_SZ = 3 * mm
 
 # ─────────────────────────────────────────────
-#  PALETTES PAR DÉFAUT
+#  PALETTES PAR DÉFAUT (gris neutre)
 # ─────────────────────────────────────────────
 DEFAULT_PALETTES = {
     "arme": {
-        "header_bg": "#C17B7B",
+        "header_bg": "#808080",
         "header_fg": "#FFFFFF",
-        "stats_bg": "#FAF0EC",
-        "stats_fg": "#5A2A2A",
-        "border": "#B09090",
-        "tag_bg": "#D4A0A0",
-        "tag_fg": "#3D1515",
+        "stats_bg": "#F0F0F0",
+        "stats_fg": "#333333",
+        "border": "#999999",
+        "tag_bg": "#CCCCCC",
+        "tag_fg": "#333333",
         "label": "ARME",
     },
     "armure": {
-        "header_bg": "#7B9EC1",
+        "header_bg": "#808080",
         "header_fg": "#FFFFFF",
-        "stats_bg": "#EBF2F9",
-        "stats_fg": "#1E3A52",
-        "border": "#8AAAC0",
-        "tag_bg": "#A0BDD4",
-        "tag_fg": "#12263A",
+        "stats_bg": "#F0F0F0",
+        "stats_fg": "#333333",
+        "border": "#999999",
+        "tag_bg": "#CCCCCC",
+        "tag_fg": "#333333",
         "label": "ARMURE",
     },
     "equipement": {
-        "header_bg": "#7BAE7B",
+        "header_bg": "#808080",
         "header_fg": "#FFFFFF",
-        "stats_bg": "#EDF5EC",
-        "stats_fg": "#2A4A28",
-        "border": "#90B090",
-        "tag_bg": "#A4C9A2",
-        "tag_fg": "#1A3318",
+        "stats_bg": "#F0F0F0",
+        "stats_fg": "#333333",
+        "border": "#999999",
+        "tag_bg": "#CCCCCC",
+        "tag_fg": "#333333",
         "label": "EQUIPEMENT",
     },
 }
 
 
-def _resolve_palette(card: dict) -> dict:
+def _resolve_palette(card: dict, styles: dict = None) -> dict:
     """
     Résout la palette à utiliser pour une carte.
-    Priorité : _template du JSON > palette par défaut du type.
+    Priorité : styles chargés > palette par défaut du type.
     Les couleurs hex sont converties en objets reportlab.
     """
+    if styles is None:
+        styles = {}
+    
     kind = card.get("type", "equipement").lower()
-    base = DEFAULT_PALETTES.get(kind, DEFAULT_PALETTES["equipement"]).copy()
+    
+    # Cherche le style pour ce type
+    if kind in styles and "template" in styles[kind]:
+        base = styles[kind]["template"].copy()
+    else:
+        base = DEFAULT_PALETTES.get(kind, DEFAULT_PALETTES["equipement"]).copy()
 
     # Override avec le template custom si présent
     template = card.get("_template", {})
@@ -90,16 +98,94 @@ def _resolve_palette(card: dict) -> dict:
 class CardGenerator:
     """Générateur de cartes JDR en PDF avec support images IA"""
 
-    def __init__(self, cache_dir=".image_cache"):
+    def __init__(self, style_path: str = None):
         """
         Initialise le générateur
 
         Args:
-            cache_dir: Répertoire de cache des images générées
+            style_path: Chemin vers le fichier style.json (optionnel)
         """
-        self.cache_dir = cache_dir
-        self.provider_manager = ImageProviderManager(cache_dir)
-        os.makedirs(cache_dir, exist_ok=True)
+        self.styles = {}
+        if style_path:
+            self._load_styles(style_path)
+
+    def _load_styles(self, style_path: str):
+        """
+        Charge les styles depuis un fichier JSON
+
+        Args:
+            style_path: Chemin vers le fichier style.json
+        """
+        try:
+            if os.path.exists(style_path):
+                with open(style_path, encoding="utf-8") as f:
+                    self.styles = json.load(f)
+                print(f"✅ Styles chargés depuis {style_path}")
+            else:
+                print(f"⚠️  Fichier de styles non trouvé : {style_path}")
+        except Exception as e:
+            print(f"⚠️  Erreur lors du chargement des styles : {e}")
+
+    def load_csv(self, path: str, card_type: str = "equipement") -> list:
+        """
+        Charge un fichier CSV de cartes
+
+        Args:
+            path: Chemin du fichier CSV
+            card_type: Type de carte (arme, armure, equipement)
+
+        Returns:
+            Liste des cartes avec le type assigné
+
+        Raises:
+            CardGeneratorError: Si le fichier est introuvable ou invalide
+        """
+        try:
+            with open(path, encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                cards = list(reader)
+        except FileNotFoundError:
+            raise CardGeneratorError(f"Fichier introuvable : {path}")
+        except Exception as e:
+            raise CardGeneratorError(f"Erreur lors de la lecture du CSV {path} : {e}")
+
+        if not cards:
+            raise CardGeneratorError(f"Fichier CSV vide : {path}")
+
+        # Assigne le type à toutes les cartes et parse les champs stats
+        for card in cards:
+            card.setdefault("type", card_type)
+            
+            # Parse le champ stats s'il existe et n'est pas vide
+            if "stats" in card and card["stats"]:
+                try:
+                    # Essaie d'abord du JSON
+                    card["stats"] = json.loads(card["stats"])
+                except (json.JSONDecodeError, ValueError):
+                    # Sinon, parse le format "clé: valeur; clé2: valeur2"
+                    stats_dict = {}
+                    for pair in card["stats"].split(";"):
+                        if ":" in pair:
+                            key, val = pair.split(":", 1)
+                            stats_dict[key.strip()] = val.strip()
+                    card["stats"] = stats_dict if stats_dict else {}
+            else:
+                card["stats"] = {}
+
+        return cards
+
+    @staticmethod
+    def _detect_card_type(filename: str) -> str:
+        """
+        Détecte le type de carte par le nom du fichier
+        """
+        name = filename.lower()
+        if "weapon" in name or "arme" in name:
+            return "arme"
+        elif "armor" in name or "armure" in name:
+            return "armure"
+        else:
+            return "equipement"
 
     @staticmethod
     def load_json(path: str) -> list:
@@ -173,25 +259,40 @@ class CardGenerator:
     def load_cards_from_input(self, input_path: str) -> list:
         """
         Charge les cartes depuis un fichier ou un dossier
-        Détecte automatiquement le type de carte via les métadonnées JSON
-        ou le nom de fichier (fallback)
+        Auto-détecte JSON ou CSV par extension de fichier
+        Détecte le type de carte via le nom de fichier
 
         Args:
-            input_path: Chemin vers un fichier JSON ou un dossier contenant des JSONs
+            input_path: Chemin vers un fichier ou un dossier contenant des cartes
 
         Returns:
             Liste complète de toutes les cartes chargées
 
         Raises:
-            CardGeneratorError: Si aucun fichier JSON n'est trouvé
+            CardGeneratorError: Si aucun fichier n'est trouvé
         """
         cards = []
 
         if os.path.isdir(input_path):
+            # Cherche les CSV d'abord, puis les JSON
+            csv_files = sorted(glob.glob(os.path.join(input_path, "*.csv")))
             json_files = sorted(glob.glob(os.path.join(input_path, "*.json")))
-            if not json_files:
-                raise CardGeneratorError(f"Aucun fichier JSON trouvé dans {input_path}")
+            
+            # Exclut style.json et autres fichiers de configuration
+            json_files = [f for f in json_files if os.path.basename(f) not in ("style.json",)]
+            
+            if not csv_files and not json_files:
+                raise CardGeneratorError(f"Aucun fichier de cartes trouvé dans {input_path}")
 
+            # Charge les CSV
+            for filepath in csv_files:
+                filename = os.path.basename(filepath)
+                card_type = self._detect_card_type(filename)
+                loaded = self.load_csv(filepath, card_type)
+                print(f"  📁 {filename}: {len(loaded)} {card_type}(s)")
+                cards.extend(loaded)
+            
+            # Charge les JSON (support rétrocompatible)
             for filepath in json_files:
                 filename = os.path.basename(filepath)
                 loaded = self.load_json(filepath)
@@ -199,22 +300,15 @@ class CardGenerator:
                 print(f"  📁 {filename}: {len(loaded)} {card_type}(s)")
                 cards.extend(loaded)
         else:
-            cards = self.load_json(input_path)
+            # Fichier unique
+            ext = os.path.splitext(input_path)[1].lower()
+            if ext == ".csv":
+                card_type = self._detect_card_type(os.path.basename(input_path))
+                cards = self.load_csv(input_path, card_type)
+            else:
+                cards = self.load_json(input_path)
 
         return cards
-
-    def fetch_images_for_cards(self, cards: list, provider: str = "pollinations",
-                              model: str = "stabilityai/sd-turbo", **kwargs):
-        """
-        Génère/récupère les images pour les cartes
-
-        Args:
-            cards: Liste des cartes
-            provider: Fournisseur d'images (pollinations, local, localapi, openai)
-            model: Modèle à utiliser (pour provider=local)
-            **kwargs: Arguments supplémentaires (api_url, api_key)
-        """
-        self.provider_manager.fetch_images(cards, provider, model, **kwargs)
 
     def generate_cards(self, cards: list, output_path: str = None):
         """
@@ -271,7 +365,7 @@ class CardGenerator:
     def _draw_card(self, c: canvas.Canvas, x: float, y: float, card: dict):
         """Dessine une carte"""
         kind = card.get("type", "equipement").lower()
-        pal = _resolve_palette(card)
+        pal = _resolve_palette(card, self.styles)
 
         # ── Ombre portée ──────────────────────────────────────────────
         SHADOW = 1.5 * mm

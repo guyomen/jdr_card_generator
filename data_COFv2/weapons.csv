@@ -1,0 +1,35 @@
+nom,sous_type,dm,portee,regles,image_path
+Mains nues,Corps à corps,1d3,Mêlée,DM temporaires.,./images/bare_hands.png
+Bâton,Corps à corps,1d4,Mêlée,Arme à deux mains. DM temporaires possibles.,./images/staff.png
+Bâton ferré,Corps à corps,1d6,Mêlée,Arme à deux mains.,./images/shod_staff.png
+Dague,Corps à corps,1d4,Mêlée / 5m,"Arme légère. Peut être lancée (5m, 1d4 DM).",./images/dagger.png
+Épée à deux mains,Corps à corps,2d6,Mêlée,Arme à deux mains.,./images/greatsword.png
+Épée bâtarde,Corps à corps,1d8/1d12,Mêlée,Arme à une ou deux mains.,./images/bastard_sword.png
+Épée courte,Corps à corps,1d6,Mêlée,Arme légère.,./images/short_sword.png
+Épée longue,Corps à corps,1d8,Mêlée,,./images/longsword.png
+Épieu,Corps à corps,1d6/1d10,Mêlée / 10m,"Arme à une ou deux mains. Peut être lancé (10m, 1d6 DM).",./images/spear.png
+Fléau,Corps à corps,1d6,Mêlée,Relance 1 attaque ratée/combat contre bouclier ou arme.,./images/flail.png
+Fléau à deux mains,Corps à corps,1d10,Mêlée,Arme à deux mains. Relance 1 attaque ratée/combat.,./images/great_flail.png
+Gourdin,Corps à corps,1d4,Mêlée,DM temporaires possibles.,./images/club.png
+Hache,Corps à corps,1d8,Mêlée,,./images/axe.png
+Hache à deux mains,Corps à corps,2d6,Mêlée,Arme à deux mains.,./images/great_axe.png
+Lance,Corps à corps,1d6/1d10,Mêlée / 10m,"Arme à une ou deux mains. Peut être lancée (10m, 1d6 DM).",./images/lance.png
+Lance de cavalerie,Corps à corps,2d6,Mêlée,Usage à cheval uniquement. Dé malus au contact sans élan.,./images/cavalry_lance.png
+Marteau,Corps à corps,1d6,Mêlée,,./images/hammer.png
+Masse,Corps à corps,1d6,Mêlée,,./images/mace.png
+Pique,Corps à corps,1d10,Mêlée,Arme à deux mains. Double les DM contre charge de grande créature.,./images/pike.png
+Rapière,Corps à corps,1d6,Mêlée,Arme légère. Critique sur 19-20.,./images/rapier.png
+Stylet,Corps à corps,1d3,Mêlée,Arme légère. Pas de FOR aux DM. Si cible surprise : 1d6+AGI DM.,./images/stiletto.png
+Vivelame,Corps à corps,1d10,Mêlée,Arme à deux mains. Critique sur 19-20.,./images/curved_blade.png
+Arbalète de poing,Distance,1d6,10m,Action de mouvement pour recharger.,./images/hand_crossbow.png
+Arbalète légère,Distance,2d4,30m,Arme à deux mains. Action de mouvement pour recharger.,./images/light_crossbow.png
+Arbalète lourde,Distance,2d6,60m,Arme à deux mains. Action limitée pour recharger.,./images/heavy_crossbow.png
+Arc court,Distance,1d6,30m,Arme à deux mains.,./images/short_bow.png
+Arc long,Distance,1d8,50m,Arme à deux mains. FOR minimum +1.,./images/longbow.png
+Couteaux de lancer,Distance,1d4,10m,"1d3 DM au contact. Peut lancer 3 couteaux (action limitée, +AGI aux DM).",./images/throwing_knives.png
+Fronde,Distance,1d4,20m,,./images/sling.png
+Hachette,Distance,1d6,5m,,./images/hatchet.png
+Javelot,Distance,1d6,20m,"Avec propulseur : portée doublée, action limitée.",./images/javelin.png
+Lance-pierre,Distance,1d3,10m,,./images/slingshot.png
+Pétoire,Distance,1d10,20m,Arme à poudre (autorisation MJ). Action limitée pour recharger.,./images/pistol.png
+Mousquet,Distance,2d6,50m,Arme à poudre (autorisation MJ). Arme à deux mains. Action limitée pour recharger.,./images/musket.png

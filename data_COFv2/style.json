@@ -1,0 +1,41 @@
+{
+  "arme": {
+    "type": "arme",
+    "template": {
+      "label": "ARME",
+      "header_bg": "#C17B7B",
+      "header_fg": "#FFFFFF",
+      "stats_bg": "#FAF0EC",
+      "stats_fg": "#5A2A2A",
+      "border": "#B09090",
+      "tag_bg": "#D4A0A0",
+      "tag_fg": "#3D1515"
+    }
+  },
+  "armure": {
+    "type": "armure",
+    "template": {
+      "label": "ARMURE",
+      "header_bg": "#7B9EC1",
+      "header_fg": "#FFFFFF",
+      "stats_bg": "#EBF2F9",
+      "stats_fg": "#1E3A52",
+      "border": "#8AAAC0",
+      "tag_bg": "#A0BDD4",
+      "tag_fg": "#12263A"
+    }
+  },
+  "equipement": {
+    "type": "equipement",
+    "template": {
+      "label": "EQUIPEMENT",
+      "header_bg": "#7BAE7B",
+      "header_fg": "#FFFFFF",
+      "stats_bg": "#EDF5EC",
+      "stats_fg": "#2A4A28",
+      "border": "#90B090",
+      "tag_bg": "#A4C9A2",
+      "tag_fg": "#1A3318"
+    }
+  }
+}
