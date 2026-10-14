@@ -3,39 +3,39 @@
     "type": "arme",
     "template": {
       "label": "ARME",
-      "header_bg": "#C17B7B",
-      "header_fg": "#FFFFFF",
-      "stats_bg": "#FAF0EC",
-      "stats_fg": "#5A2A2A",
-      "border": "#B09090",
-      "tag_bg": "#D4A0A0",
-      "tag_fg": "#3D1515"
+      "header_bg": "#C4ABA5",
+      "header_fg": "#5A3B36",
+      "stats_bg": "#D9CCC6",
+      "stats_fg": "#4B362F",
+      "border": "#D1B5A1",
+      "tag_bg": "#D9BAB0",
+      "tag_fg": "#5C3F3A"
     }
   },
   "armure": {
     "type": "armure",
     "template": {
       "label": "ARMURE",
-      "header_bg": "#7B9EC1",
-      "header_fg": "#FFFFFF",
-      "stats_bg": "#EBF2F9",
-      "stats_fg": "#1E3A52",
-      "border": "#8AAAC0",
-      "tag_bg": "#A0BDD4",
-      "tag_fg": "#12263A"
+      "header_bg": "#ABB2B9",
+      "header_fg": "#3B3F2F",
+      "stats_bg": "#D1D4D8",
+      "stats_fg": "#2F3226",
+      "border": "#AEB6BE",
+      "tag_bg": "#BEC5CB",
+      "tag_fg": "#3A3F3B"
     }
   },
   "equipement": {
     "type": "equipement",
     "template": {
       "label": "EQUIPEMENT",
-      "header_bg": "#7BAE7B",
-      "header_fg": "#FFFFFF",
-      "stats_bg": "#EDF5EC",
-      "stats_fg": "#2A4A28",
-      "border": "#90B090",
-      "tag_bg": "#A4C9A2",
-      "tag_fg": "#1A3318"
+      "header_bg": "#B7BEA7",
+      "header_fg": "#3F3F2F",
+      "stats_bg": "#D6D9D1",
+      "stats_fg": "#2F2F22",
+      "border": "#BBC4AB",
+      "tag_bg": "#CAD1B9",
+      "tag_fg": "#3B3B2F"
     }
   }
 }

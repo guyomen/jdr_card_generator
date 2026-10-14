@@ -107,6 +107,7 @@ class CardGenerator:
         """
         self.styles = {}
         if style_path:
+            print(f"🔍 Chargement des styles depuis {style_path}...")
             self._load_styles(style_path)
 
     def _load_styles(self, style_path: str):
@@ -410,9 +411,13 @@ class CardGenerator:
         c.drawCentredString(x + CARD_W / 2, name_y, name)
 
         # ── Image + Badge type vertical à gauche ──────────────────────
-        image_path = card.get("image")
+        image_path = card.get("image_path")
         has_image = image_path and os.path.exists(image_path)
-        img_h = 44 * mm if has_image else 28 * mm
+        if has_image: 
+            print(f"  🖼️  Image trouvée pour '{name}' : {image_path}")
+        else:
+            print(f"  ⚠️  Aucune image trouvée pour '{name}' (chemin : {image_path})")
+        img_h = 28 * mm
         badge_w = 5 * mm
         img_margin = 3 * mm
         img_x = x + img_margin + badge_w + 1 * mm
